@@ -1,5 +1,7 @@
 import socket
 
+# Client socket to test server
+
 port = 8765
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
