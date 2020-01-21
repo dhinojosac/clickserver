@@ -1,6 +1,7 @@
 import socket
 import time 
 from pynput.mouse import Listener
+from pynput.mouse import Button
 import threading
 
 port = 8765
@@ -14,9 +15,12 @@ def on_click(x, y, button,  pressed):
 
     if conn != None:
         out_msg = "#{},{}$".format(x,y)
-        conn.send(bytes(out_msg,"utf-8"))
-        if pressed: #left or right click
+        #conn.send(bytes(out_msg,"utf-8"))
+        conn.sendall(bytes(out_msg,"utf-8"))
+        if pressed and button == Button.left: #left or right click
             print(x, y, button)
+        if pressed == False:
+            pass
     else:
         print("Connection does't exist")
     
@@ -37,6 +41,7 @@ def createServer():
     
         time.sleep(20)
         conn.send(bytes("exit","utf-8"))
+        '''
         break
     time.sleep(5)
     conn.close()
@@ -44,6 +49,7 @@ def createServer():
     if listener != None:
         listener.stop()
         print("Socket was stopped!")
+        '''
 
 # Main
 def main():
@@ -52,8 +58,9 @@ def main():
     thread1.start()
 
     try:
-        with Listener(on_click=on_click) as listener:
-            listener.join()
+        listener =  Listener(on_click=on_click) 
+        listener.start()
+        print("listener started...")
     except KeyboardInterrupt:
         print("Exiting...")
 
