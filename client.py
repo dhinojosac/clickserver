@@ -4,13 +4,24 @@ import socket
 
 port = 8765
 
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((socket.gethostname(), port))
+read = s.makefile('r')
+write = s.makefile('w')
 
-while True:    
-    msg= s.recv(1024)
-    print(msg.decode("utf-8"))
+def send(cmd):
+    print("send: ", cmd)
+    write.write(cmd+'\n') 
+    write.flush()
 
-    if msg.decode("utf-8") == "exit":
-        break
-    
+with s,read,write:
+    send('START')
+    while True:
+        data = read.readline()
+        if not data: break
+        item = data.strip()
+        if item == 'DONE': break
+        print(f'click: {item}')
+    send('END')
+

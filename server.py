@@ -6,29 +6,42 @@ import threading
 
 port = 8765
 
-conn = None
-listener = None
+conn        = None
+listener    = None
+read        = None
+write       = None
+
+# Function to Send click
+def send(cmd):
+    global write
+    print("send: ",cmd)
+    write.write(cmd+'\n')
+    write.flush()
+
+# Sen on_move listener
+def on_move(x, y):
+    pass
 
 # Set on_click listener
 def on_click(x, y, button,  pressed):
     global conn
 
-    if conn != None:
-        out_msg = "#{},{}$".format(x,y)
-        #conn.send(bytes(out_msg,"utf-8"))
-        conn.sendall(bytes(out_msg,"utf-8"))
+    if conn != None:     
         if pressed and button == Button.left: #left or right click
-            print(x, y, button)
-        if pressed == False:
-            pass
+            print("clicked ",x, y, button)
+            out_msg = "#{},{}$".format(x,y)
+            send(out_msg)
+        if button == Button.right: #to test
+            send("DONE")
     else:
-        print("Connection does't exist")
+        print("Connection with client does't exist")
     
 
 # Create a server socket tcp/ip
 def createServer():
     global conn
     global listener
+    global read, write
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((socket.gethostname(), port))
@@ -37,12 +50,22 @@ def createServer():
     while True:
         conn, addr = s.accept()
         print(f"Connection from {addr} has been stablished!")
-        conn.send(bytes("Welcome","utf-8"))
-    
-        time.sleep(20)
-        conn.send(bytes("exit","utf-8"))
+        read = conn.makefile('r')
+        write = conn.makefile('w')
+
+        with conn, read, write:
+            while True:
+                data = read.readline()
+                if not data: break
+                cmd = data.strip()
+                print(f'cmd: {cmd}')
+                if cmd == 'START':
+                    send('OK')
+                if cmd == 'END':
+                    pass #control ending program
+        print(f'Disconnect: {addr}')
+
         '''
-        break
     time.sleep(5)
     conn.close()
     print("Socket was closed!")
@@ -58,7 +81,7 @@ def main():
     thread1.start()
 
     try:
-        listener =  Listener(on_click=on_click) 
+        listener =  Listener(on_click=on_click, on_move=on_move) 
         listener.start()
         print("listener started...")
     except KeyboardInterrupt:
