@@ -15,8 +15,11 @@ write       = None
 def send(cmd):
     global write
     print("send: ",cmd)
-    write.write(cmd+'\n')
-    write.flush()
+    try:
+        write.write(cmd+'\n')
+        write.flush()
+    except :
+        pass
 
 # Sen on_move listener
 def on_move(x, y):
@@ -33,6 +36,7 @@ def on_click(x, y, button,  pressed):
             send(out_msg)
         if button == Button.right: #to test
             send("DONE")
+            conn = None
     else:
         print("Connection with client does't exist")
     
@@ -45,6 +49,7 @@ def createServer():
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((socket.gethostname(), port))
+    print("Server on ",socket.gethostname())
     s.listen()
 
     while True:
