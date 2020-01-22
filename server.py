@@ -54,7 +54,7 @@ def createServer():
 
     while True:
         conn, addr = s.accept()
-        print(f"Connection from {addr} has been stablished!")
+        print("Connection from {} has been stablished!".format(addr))
         read = conn.makefile('r')
         write = conn.makefile('w')
 
