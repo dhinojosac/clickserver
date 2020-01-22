@@ -1,7 +1,7 @@
-t = tcpip('0.0.0.0', 8765);
-fopen(t);
+t = tcpip('0.0.0.0', 8765); %socket server configuration
+fopen(t);   %open client
 
-while 1
+while 1  %eternal loop to receive mouse clicks
     data = fscanf(t);
     if data ~= "";  %check empty data
         datastr = strip(data) %strip data;
@@ -15,5 +15,5 @@ while 1
     end
 end
 
- fclose(t)
+ fclose(t) % close client
  fprintf('Client closed!\n') 

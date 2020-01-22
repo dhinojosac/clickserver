@@ -19,7 +19,7 @@ def send(cmd):
         write.write(cmd+'\n')
         write.flush()
     except :
-        pass
+        pass #when the client is disconenected
 
 # Sen on_move listener
 def on_move(x, y):
