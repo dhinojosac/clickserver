@@ -63,7 +63,7 @@ def createServer():
                 data = read.readline()
                 if not data: break
                 cmd = data.strip()
-                print(f'cmd: {cmd}')
+                print('cmd: {}'.format(cmd))
                 if cmd == 'START':
                     send('OK')
                 if cmd == 'END':
