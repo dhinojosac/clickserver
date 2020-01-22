@@ -22,6 +22,6 @@ with s,read,write:
         if not data: break
         item = data.strip()
         if item == 'DONE': break
-        print(f'click: {item}')
+        print('click: {}'.format(item))
     send('END')
 
