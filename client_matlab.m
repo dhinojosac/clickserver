@@ -3,8 +3,6 @@ fopen(t);   %open client
 
 px = -1;
 px = -1;
-save('px');
-save('py');
 
 while 1  %eternal loop to receive mouse clicks
     data = fscanf(t);

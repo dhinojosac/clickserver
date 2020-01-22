@@ -6,10 +6,12 @@ import threading
 
 port = 8765
 
+s           = None
 conn        = None
 listener    = None
 read        = None
 write       = None
+Running     = True
 
 # Function to Send click
 def send(cmd):
@@ -25,6 +27,17 @@ def send(cmd):
 def on_move(x, y):
     pass
 
+def start_mouse_listener():
+    global listener
+    listener =  Listener(on_click=on_click, on_move=on_move) 
+    listener.start()
+    print("listener started...")
+
+def stop_mouse_listener():
+    global listener
+    listener.stop()
+    print("listener stopped...")
+
 # Set on_click listener
 def on_click(x, y, button,  pressed):
     global conn
@@ -32,11 +45,10 @@ def on_click(x, y, button,  pressed):
     if conn != None:     
         if pressed and button == Button.left: #left or right click
             print("clicked ",x, y, button)
-            out_msg = "#{},{}$".format(x,y)
+            out_msg = "#{0:04},{1:04}$".format(x,y)
             send(out_msg)
         if button == Button.right: #to test
             send("DONE")
-            conn = None
     else:
         print("Connection with client does't exist")
     
@@ -46,51 +58,68 @@ def createServer():
     global conn
     global listener
     global read, write
+    global Running
+    global s
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((socket.gethostname(), port))
-    print("Server on ",socket.gethostname())
+    s.bind(("0.0.0.0", port))
+    print("Server on ","0.0.0.0")
     s.listen()
 
-    while True:
+    while Running:
+        
+        print("\n[!] Waiting a new client...")
         conn, addr = s.accept()
-        print("Connection from {} has been stablished!".format(addr))
+        print("[+] Connection from {} has been stablished!".format(addr))
         read = conn.makefile('r')
         write = conn.makefile('w')
 
         with conn, read, write:
+            # start listener mouse
+            try: 
+                start_mouse_listener()
+            except:
+                print("[-] The mouse listener couldn't start")
+
             while True:
                 data = read.readline()
-                if not data: break
+                if not data:
+                    break
+
                 cmd = data.strip()
                 print('cmd: {}'.format(cmd))
                 if cmd == 'START':
                     send('OK')
                 if cmd == 'END':
                     pass #control ending program
-        print('Disconnect: {}'.format(addr))
 
-        '''
-    time.sleep(5)
-    conn.close()
-    print("Socket was closed!")
-    if listener != None:
-        listener.stop()
-        print("Socket was stopped!")
-        '''
+        print('Disconnect: {}'.format(addr))
+        conn = None
+        #close listener mouse
+        stop_mouse_listener()
+
+
+        
+
 
 # Main
 def main():
-    global listener
-    thread1 = threading.Thread(target=createServer, args=()) # Create thread with server
-    thread1.start()
+    global listener, Running, s
+    print("** Socket Server Start **\n")
 
+    thread1 = threading.Thread(target=createServer, args=()) # Create thread with server
+    thread1.start()    
+    
     try:
-        listener =  Listener(on_click=on_click, on_move=on_move) 
-        listener.start()
-        print("listener started...")
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
         print("Exiting...")
+        Running = False
+        s.close()
+
+    print("bye")
+        
 
 
 
