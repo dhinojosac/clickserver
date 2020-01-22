@@ -68,7 +68,7 @@ def createServer():
                     send('OK')
                 if cmd == 'END':
                     pass #control ending program
-        print(f'Disconnect: {addr}')
+        print('Disconnect: {}'.format(addr))
 
         '''
     time.sleep(5)
