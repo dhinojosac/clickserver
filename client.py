@@ -6,7 +6,7 @@ port = 8765
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((socket.gethostname(), port))
+s.connect(("127.0.0.1", port))
 read = s.makefile('r')
 write = s.makefile('w')
 

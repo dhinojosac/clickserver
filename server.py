@@ -62,8 +62,8 @@ def createServer():
     global s
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(("0.0.0.0", port))
-    print("Server on ","0.0.0.0")
+    s.bind(("127.0.0.1", port))
+    print("Server on ","127.0.0.1")
     s.listen()
 
     while Running:
@@ -116,7 +116,9 @@ def main():
     except KeyboardInterrupt:
         print("Exiting...")
         Running = False
+        s.shutdown(socket.SHUT_RDWR)
         s.close()
+        print("Server closed!")
 
     print("bye")
         
