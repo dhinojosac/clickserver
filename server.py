@@ -36,6 +36,7 @@ def start_mouse_listener():
 def stop_mouse_listener():
     global listener
     listener.stop()
+    listener = None
     print("listener stopped...")
 
 # Set on_click listener
@@ -116,7 +117,8 @@ def main():
     except KeyboardInterrupt:
         print("Exiting...")
         Running = False
-        stop_mouse_listener()
+        if listener != None:
+            stop_mouse_listener()
         s.shutdown(socket.SHUT_RDWR)
         s.close()
         print("Server closed!")
