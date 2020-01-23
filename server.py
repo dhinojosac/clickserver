@@ -116,6 +116,7 @@ def main():
     except KeyboardInterrupt:
         print("Exiting...")
         Running = False
+        stop_mouse_listener()
         s.shutdown(socket.SHUT_RDWR)
         s.close()
         print("Server closed!")
