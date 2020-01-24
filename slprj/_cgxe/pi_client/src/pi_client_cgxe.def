@@ -1,4 +1,0 @@
-LIBRARY pi_client_cgxe.mexw64
-EXPORTS
-mexFunction
-mexfilerequiredapiversion

@@ -1,4 +1,5 @@
 # Click Tracker
 
-## Usage
-Run `server.py` and then `client_matlab.m` or `client.py` to test program
+## Uso
+- Correr el servidor `server.py` utilizando *python 3* : `python3 server.py`
+- Correr un cliente `python3 client.py` para probar el programa o el script de matlab `client_matlab.m`
